@@ -9,7 +9,6 @@
 #SBATCH --cpus-per-task=1 # reserver 8 CPU par tache (et memoire associee)
 #SBATCH --time=0:10:00 # temps maximal d’allocation "(HH:MM:SS)"
 #SBATCH --hint=nomultithread # desactiver l’hyperthreading
-#SBATCH --account=xyz@a100 # comptabilite A100
 module purge # nettoyer les modules herites par defaut
 conda deactivate # desactiver les environnements herites par defaut
 module load cpuarch/amd # selectionner les modules compiles pour AMD

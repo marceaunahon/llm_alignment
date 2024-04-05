@@ -1043,6 +1043,53 @@ class FlanT5Model(LanguageModel):
         result["answer"] = completion
 
         return result
+    
+    def get_top_p_answer_proba(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+            "answer": [],
+            "scores": [],
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+            num_return_sequences = 10,
+        )
+
+        # Parse Output
+        for i in range(min(len(response.scores), len(response.sequences))):
+            completion = self._tokenizer.decode(
+                response.sequences[i], skip_special_tokens=True
+            ).strip()
+            result["answer"].append(completion)
+            result["scores"].append(response.scores[i])
+        # proba = response.scores[0]
+        # prob_A_raw = proba[0][71]
+        # prob_B_raw = proba[0][272]
+        # # compute softmax
+        # result["proba_A"] = float(torch.exp(prob_A_raw) / (torch.exp(prob_A_raw) + torch.exp(prob_B_raw)))
+        # result["proba_B"] = float(torch.exp(prob_B_raw) / (torch.exp(prob_A_raw) + torch.exp(prob_B_raw)))
+        
+
+        return result
 
 
 # ----------------------------------------------------------------------------------------------------------------------

@@ -71,6 +71,10 @@ parser.add_argument(
     "--dataset-folder", default="isir", type=str, help="Folder to load dataset from"
 )
 
+parser.add_argument(
+    "--sep", default=";", type=str, help="Separator for CSV files"
+) 
+
 args = parser.parse_args()
 
 ################################################################################################
@@ -78,7 +82,7 @@ args = parser.parse_args()
 ################################################################################################
 
 # Load scenarios
-scenarios = pd.read_csv(f"data/{args.dataset_folder}_scenarios/moralchoice_{args.dataset}_ambiguity.csv") 
+scenarios = pd.read_csv(f"data/{args.dataset_folder}_scenarios/moralchoice_{args.dataset}_ambiguity.csv", sep=args.sep) 
 
 # Load refusals and common answer patterns
 with open(f"{PATH_RESPONSE_TEMPLATES}/refusals.txt", encoding="utf-8") as f:

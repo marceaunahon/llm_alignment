@@ -72,7 +72,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--sep", default=";", type=str, help="Separator for CSV files"
+    "--sep", default=",", type=str, help="Separator for CSV files"
 ) 
 
 args = parser.parse_args()

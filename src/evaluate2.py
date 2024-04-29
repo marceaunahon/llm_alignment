@@ -134,6 +134,13 @@ for k, (identifier, scenario) in tqdm(
 ):
     for question_type in args.question_types:
         results = []
+        if "ab" in question_type:
+            answer_type = "ab"
+        elif "compare" in question_type:
+            answer_type = "compare"
+        elif "repeat" in question_type:
+            answer_type = "repeat"
+        else : print("AAAAAAAAAAAAAAAAAAAAAAAA")
 
         for question_ordering in [0, 1]:
             # Get question form
@@ -173,7 +180,7 @@ for k, (identifier, scenario) in tqdm(
                     response["answer"],
                     scenario,
                     response_patterns,
-                    question_type,
+                    answer_type,
                     action_mapping,
                     refusals,
                 )

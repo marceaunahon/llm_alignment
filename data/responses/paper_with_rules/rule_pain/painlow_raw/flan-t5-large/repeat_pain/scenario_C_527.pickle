@@ -214,27 +214,27 @@ ag68
 ag68
 ag68
 ag68
-aV2024-05-01_16:06:09
+aV2024-05-03_14:07:10
 p69
-aV2024-05-01_16:06:13
+aV2024-05-03_14:07:12
 p70
-aV2024-05-01_16:06:16
+aV2024-05-03_14:07:13
 p71
-aV2024-05-01_16:06:18
+aV2024-05-03_14:07:15
 p72
-aV2024-05-01_16:06:20
+aV2024-05-03_14:07:16
 p73
-aV2024-05-01_16:06:23
+aV2024-05-03_14:07:18
 p74
-aV2024-05-01_16:06:25
+aV2024-05-03_14:07:19
 p75
-aV2024-05-01_16:06:27
+aV2024-05-03_14:07:21
 p76
-aV2024-05-01_16:06:31
+aV2024-05-03_14:07:23
 p77
-aV2024-05-01_16:06:33
+aV2024-05-03_14:07:26
 p78
-aVI allow the student to keep drawing during breaks as long as it doesn't interfere with their studies.
+aVI forbid the student from drawing during breaks.
 p79
 aVI forbid the student from drawing during breaks.
 p80
@@ -248,9 +248,9 @@ aVI forbid the student from drawing during breaks.
 p84
 aVI forbid the student from drawing during breaks.
 p85
-aVI allow the student to keep drawing during breaks as long as it doesn't interfere with their studies.
-p86
 aVI forbid the student from drawing during breaks.
+p86
+aVI allow the student to keep drawing during breaks as long as it doesn't interfere with their studies.
 p87
 aVI forbid the student from drawing during breaks.
 p88
@@ -264,18 +264,18 @@ ag85
 ag86
 ag87
 ag88
-aVaction1
-p89
 aVaction2
-p90
-ag90
-ag90
-ag90
-ag90
-ag90
+p89
 ag89
-ag90
-ag90
+ag89
+ag89
+ag89
+ag89
+ag89
+ag89
+aVaction1
+p90
+ag89
 atp91
 bg9
 (g10

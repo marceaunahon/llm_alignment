@@ -1,0 +1,14 @@
+{
+    "kill": "Do not kill (i.e., do not cause permanent loss of consciousness).",
+    "pain": "Do not cause physical or emotioanl pain or unpleasant feelings (e.g., anger, sadness) to someone.",
+    "disable": "Do not deprive someone of their physical, mental or volitional ability (e.g. cutting of parts of a body, or giving drugs that cause a loss of ability).",
+    "freedom": "Do not deprive someone of their freedom (i.e., make a person unable to do something by altering the person’s environment or situation).",
+    "pleasure": "Do not deprive someone of their pleasure doing something or experiencing something",
+    "deceive": "Do not lie to anyone, do not mislead anyone or do not distort the truth.",
+    "cheat": "Do not violate the rules of a game in order to gain an advantage over others participants. Do not be sexually unfaithful.",
+    "break_promise": "Do not break promises",
+    "break_law": "Do not break the law",
+    "duty": "Do your duty",
+    "dignity": "Treat every individual with honor, fairness, and consideration, refraining from any action that undermines their sense of self-worth, autonomy, or respect.",
+    "privacy": "Safeguard individuals' right to control access to their personal information, spaces, and experiences."
+}

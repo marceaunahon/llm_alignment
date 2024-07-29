@@ -17,7 +17,7 @@ from src.models import (
 from src.question_form_generator import get_question_form
 from src.semantic_matching import token_to_action_matching
 
-from src.config import PATH_RESULTS, PATH_RESPONSE_TEMPLATES
+from src.config import PATH_RESULTS, PATH_RESPONSE_TEMPLATES, PATH_RULES
 
 
 ################################################################################################
@@ -87,6 +87,12 @@ parser.add_argument(
     nargs="+",
 )
 
+parser.add_argument(
+    "--specify_rule", default=False, type=bool, help="Whether to specify a  rule in the prompt")
+
+parser.add_argument(
+    "--personality", default="AI", type=str, help="Personality of the LLM"
+)
 args = parser.parse_args()
 
 ################################################################################################
@@ -94,7 +100,47 @@ args = parser.parse_args()
 ################################################################################################
 
 # Load scenarios
-scenarios = pd.read_csv(f"data/{args.dataset_folder}_scenarios/moralchoice_{args.dataset}_ambiguity.csv", sep=args.sep) 
+init_scenarios = pd.read_csv(f"data/{args.dataset_folder}_scenarios/moralchoice_{args.dataset}_ambiguity.csv", sep=args.sep) 
+nb_scenarios = len(init_scenarios)
+
+done_ids = []
+path_model = f"{PATH_RESULTS}/{args.experiment_name}/{args.dataset}_raw/{args.model_name.split('/')[-1]}"
+last_question_type = args.question_types[-1]
+path_model_questiontype = path_model + f"/{last_question_type}"
+for scenario_id in init_scenarios["scenario_id"]:
+    if os.path.exists(f"{path_model_questiontype}/scenario_{scenario_id}.pickle"):
+        done_ids.append(scenario_id)
+    else :
+        break
+scenarios = init_scenarios[~init_scenarios["scenario_id"].isin(done_ids)]
+
+if len(done_ids) == 0:
+    print("Starting evaluation from scratch")
+elif len(done_ids) == nb_scenarios:
+    print("All scenarios have been evaluated. Try again with a different model, question type or experiment name.")
+    choice = input("Erase ? (yes/no) : ")
+    while choice not in ["yes", "no"]:
+        print("Please enter yes or no")
+    if choice == "no" :
+        exit()
+    if choice == "yes" :
+        scenarios = init_scenarios
+
+else:
+    print(f"{len(done_ids)} scenarios have already been evaluated.")    
+    print(f"Resuming evaluation from scenario {scenarios['scenario_id'].iloc[0]}")
+
+# Load rules 
+with open(f"{PATH_RULES}/rules.json", encoding="utf-8") as f:
+    rules = json.load(f)
+with open(f"{PATH_RULES}/refined_rules.json", encoding="utf-8") as f:
+    rules_refined = json.load(f)
+
+# Load personnalities
+with open("data\personalities.json", encoding="utf-8") as f:
+    personnalities = json.load(f)
+
+print(personnalities[args.personality])
 
 # Load refusals and common answer patterns
 with open(f"{PATH_RESPONSE_TEMPLATES}/refusals.txt", encoding="utf-8") as f:
@@ -139,11 +185,15 @@ for k, (identifier, scenario) in tqdm(
             # Get question form
             question_form, action_mapping = get_question_form(
                 scenario=scenario,
+                rules=rules,
+                personality=personnalities[args.personality],
                 question_type=question_type,
                 question_ordering=question_ordering,
                 system_instruction=True,
+                rule=args.dataset,
+                specified_rule = args.specify_rule,
             )
-
+            
             # Set result base dict
             result_base = {
                 "scenario_id": scenario["scenario_id"],

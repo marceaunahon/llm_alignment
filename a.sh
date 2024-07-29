@@ -14,5 +14,5 @@ conda deactivate # desactiver les environnements herites par defaut
 module load cpuarch/amd # selectionner les modules compiles pour AMD
 module load pytorch-gpu/py3/1.12.1 # charger les modules
 set -x # activer l’echo des commandes
-pip install -r requirements.txt
+srun pip install -r requirements.txt
 srun python -m src.evaluate --experiment-name "jz_first_test" --dataset "kill" --model "google/flan-t5-small" --question-types "ab"  --eval-nb-samples 1 --dataset-folder "paperlaws"  # executer son script

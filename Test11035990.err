@@ -1,0 +1,9 @@
+/var/spool/slurmd/job1035990/slurm_script: line 13: conda: command not found
+Loading pytorch-gpu/py3/1.12.1
+  Loading requirement: cuda/11.2 nccl/2.9.6-1-cuda cudnn/8.1.1.33-cuda gcc/8.5.0
+    openmpi/4.1.1-cuda intel-mkl/2020.4 magma/2.5.4-cuda-oneapi-mkl sox/14.4.2
+    sparsehash/2.0.3 libjpeg-turbo/2.1.3
++ srun python -u src.evaluate --experiment-name jz_first_test --dataset kill --model google/flan-t5-small --question-types ab --eval-nb-samples 1 --dataset-folder paperlaws
+/gpfslocalsup/pub/anaconda-py3/2022.05/envs/pytorch-gpu-1.12.1+py3.10.4/bin/python: can't open file '/gpfsdswork/projects/rech/aho/uus79sn/llm_alignment/src.evaluate': [Errno 2] No such file or directory
+srun: error: r3i4n3: task 0: Exited with exit code 2
+srun: Terminating StepId=1035990.0

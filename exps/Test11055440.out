@@ -1,0 +1,3 @@
+module purge done
+conda deactivate done
+conda activate done

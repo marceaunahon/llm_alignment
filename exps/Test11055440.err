@@ -1,0 +1,51 @@
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda deactivate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
++ srun python -m src.evaluate --experiment-name jz_first_test --dataset kill --model google/flan-t5-small --question-types ab --eval-nb-samples 1 --dataset-folder paperlaws
+Traceback (most recent call last):
+  File "/gpfslocalsup/pub/anaconda-py3/2021.05/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/gpfslocalsup/pub/anaconda-py3/2021.05/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/lustre/fswork/projects/rech/aho/uus79sn/llm_alignment/src/evaluate.py", line 8, in <module>
+    from src.models import (
+  File "/lustre/fswork/projects/rech/aho/uus79sn/llm_alignment/src/models.py", line 5, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+srun: error: r10i0n3: task 0: Exited with exit code 1
+srun: Terminating StepId=1055440.0

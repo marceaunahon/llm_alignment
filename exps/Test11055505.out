@@ -1,0 +1,18 @@
+module purge done
+conda deactivate done
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/condabin/conda
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/bin/conda
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/bin/conda-env
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/bin/activate
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/bin/deactivate
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/etc/profile.d/conda.sh
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/etc/fish/conf.d/conda.fish
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/shell/condabin/Conda.psm1
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/shell/condabin/conda-hook.ps1
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/lib/python3.8/site-packages/xontrib/conda.xsh
+no change     /gpfslocalsup/pub/anaconda-py3/2021.05/etc/profile.d/conda.csh
+modified      /linkhome/rech/genisi01/uus79sn/.bashrc
+
+==> For changes to take effect, close and re-open your current shell. <==
+
+conda activate done

@@ -14,7 +14,7 @@ ENV_NAME="llm"
 # Créer l'environnement Conda s'il n'existe pas
 if ! conda env list | grep -q "^${ENV_NAME}"; then
     echo "Création de l'environnement Conda: ${ENV_NAME}"
-    conda create -n ${ENV_NAME} python=3.8 -y
+    conda create -n ${ENV_NAME} python=3.11 -y
 else
     echo "L'environnement Conda ${ENV_NAME} existe déjà."
 fi

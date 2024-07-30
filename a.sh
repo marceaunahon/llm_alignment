@@ -10,9 +10,10 @@
 #SBATCH --hint=nomultithread # desactiver l’hyperthreading
 #SBATCH --account=aho@v100
 module purge # nettoyer les modules herites par defaut
+echo "module purge done"
 conda deactivate # desactiver les environnements herites par defaut
-module load cpuarch/amd # selectionner les modules compiles pour AMD
-module load pytorch-gpu/py3/1.12.1 # charger les modules
+echo "conda deactivate done"
+conda activate llm # activer l’environnement Conda
+echo "conda activate done"
 set -x # activer l’echo des commandes
-srun pip install -r requirements.txt
 srun python -m src.evaluate --experiment-name "jz_first_test" --dataset "kill" --model "google/flan-t5-small" --question-types "ab"  --eval-nb-samples 1 --dataset-folder "paperlaws"  # executer son script

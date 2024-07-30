@@ -1,4 +1,14 @@
 #!/bin/bash
+#SBATCH --job-name=Env  # nom du job
+#SBATCH --output=exps/Env%j.out # fichier de sortie (%j = job ID)
+#SBATCH --error=exps/Env%j.err # fichier d’erreur (%j = job ID)
+#SBATCH --nodes=1 # reserver 2 nœud
+#SBATCH --ntasks=1 # reserver 16 taches (ou processus)
+#SBATCH --gres=gpu:1 # reserver 8 GPU par noeud
+#SBATCH --cpus-per-task=1 # reserver 8 CPU par tache (et memoire associee)
+#SBATCH --time=0:10:00 # temps maximal d’allocation "(HH:MM:SS)"
+#SBATCH --hint=nomultithread # desactiver l’hyperthreading
+#SBATCH --account=aho@v100
 
 # Vérifier si Conda est installé
 if command -v conda &>/dev/null; then

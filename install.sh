@@ -10,14 +10,6 @@
 #SBATCH --hint=nomultithread # desactiver l’hyperthreading
 #SBATCH --account=aho@v100
 
-# Vérifier si Conda est installé
-if command -v conda &>/dev/null; then
-    echo "Conda est installé."
-else
-    echo "Conda n'est pas installé. Veuillez installer Conda et réessayer."
-    exit 1
-fi
-
 # Nom de l'environnement Conda
 ENV_NAME="llm"
 

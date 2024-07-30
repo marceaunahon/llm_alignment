@@ -23,7 +23,8 @@ fi
 
 # Activer l'environnement Conda
 echo "Activation de l'environnement Conda: ${ENV_NAME}"
-source activate ${ENV_NAME}
+conda activate ${ENV_NAME}
+echo "Environnement Conda activé."
 
 # Installer les packages à partir de requirements.txt
 if [ -f requirements.txt ]; then
@@ -32,3 +33,4 @@ else
     echo "requirements.txt introuvable."
     exit 1
 fi
+echo "Packages installés."

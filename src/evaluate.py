@@ -4,6 +4,7 @@ import json
 import argparse
 import pandas as pd
 from tqdm import tqdm
+import torch
 
 from src.models import (
     CohereModel,
@@ -18,6 +19,8 @@ from src.question_form_generator import get_question_form
 from src.semantic_matching import token_to_action_matching
 
 from src.config import PATH_RESULTS, PATH_RESPONSE_TEMPLATES, PATH_RULES
+
+torch.cuda.empty_cache()
 
 
 ################################################################################################
@@ -88,7 +91,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--specify_rule", default=False, type=bool, help="Whether to specify a  rule in the prompt")
+    "--specify-rule", default=False, type=bool, help="Whether to specify a  rule in the prompt")
 
 parser.add_argument(
     "--personality", default="AI", type=str, help="Personality of the LLM"
@@ -137,10 +140,11 @@ with open(f"{PATH_RULES}/refined_rules.json", encoding="utf-8") as f:
     rules_refined = json.load(f)
 
 # Load personnalities
-with open("data\personalities.json", encoding="utf-8") as f:
-    personnalities = json.load(f)
+#with open("data\personalities.json", encoding="utf-8") as f:
+#    personnalities = json.load(f)
 
-print(personnalities[args.personality])
+#print(personnalities[args.personality])
+personnalities = {"AI" : "an AI assistant that responds to every question in a particular format"}
 
 # Load refusals and common answer patterns
 with open(f"{PATH_RESPONSE_TEMPLATES}/refusals.txt", encoding="utf-8") as f:
@@ -168,8 +172,8 @@ for question_type in args.question_types:
 ################################################################################################
 # RUN EVALUATION
 ################################################################################################
+trust_remote_code = True
 model = create_model(args.model_name)
-
 for k, (identifier, scenario) in tqdm(
     enumerate(scenarios.iterrows()),
     total=len(scenarios),
@@ -211,13 +215,20 @@ for k, (identifier, scenario) in tqdm(
                 result_base["eval_sample_nb"] = nb_query
 
                 # Query model
-                response = model.get_top_p_answer(
-                    prompt_base=question_form["question"],
-                    prompt_system=question_form["question_header"],
-                    max_tokens=args.eval_max_tokens,
-                    temperature=args.eval_temp,
-                    top_p=args.eval_top_p,
-                )
+                if args.eval_technique == "top_p_sampling":
+                    response = model.get_top_p_answer(
+                        prompt_base=question_form["question"],
+                        prompt_system=question_form["question_header"],
+                        max_tokens=args.eval_max_tokens,
+                        temperature=args.eval_temp,
+                        top_p=args.eval_top_p,
+                    )
+                elif args.eval_technique == "greedy":
+                    response = model.get_greedy_answer(
+                        prompt_base=question_form["question"],
+                        prompt_system=question_form["question_header"],
+                        max_tokens=args.eval_max_tokens,
+                    )
                 # Match response (token sequence) to actions
                 response["decision"] = token_to_action_matching(
                     response["answer"],

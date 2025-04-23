@@ -2137,6 +2137,9 @@ class EleutherAIModel(LanguageModel):
     """EleutherAIs Model Wrapper --> Access through HuggingFace Model Hub"""
     
     def __init__(self, model_name: str):
+
+        import nltk
+        nltk.download('punkt_tab')
         super().__init__(model_name)
         assert MODELS[model_name]["model_class"] == "EleutherAIModel", (
             f"Errorneous Model Instatiation for {model_name}"
@@ -2144,7 +2147,7 @@ class EleutherAIModel(LanguageModel):
 
         # Setup Device, Model and Tokenizer
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self._model = AutoModel.from_pretrained(
+        self._model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name_or_path=self._model_name,
             cache_dir=PATH_HF_CACHE,
             torch_dtype="auto",

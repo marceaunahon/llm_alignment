@@ -545,6 +545,14 @@ MODELS = dict(
             "likelihood_access": True,
             "endpoint": None,
         },
+        "cerebras/Cerebras-GPT-590M": {
+            "company": "cerebras",
+            "model_class": "CerebrasModel",
+            "model_name": "cerebras/Cerebras-GPT-256M",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
         "cerebras/Cerebras-GPT-1.3B": {
             "company": "cerebras",
             "model_class": "CerebrasModel",

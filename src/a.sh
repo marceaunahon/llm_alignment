@@ -5,11 +5,11 @@
 #SBATCH --constraint v100-32g
 #SBATCH --nodes=1 # reserver 2 nœud
 #SBATCH --ntasks=1 # reserver 16 taches (ou processus)
-#SBATCH --gres=gpu:1 # reserver 8 GPU par noeud
+#SBATCH --gres=gpu:0 # reserver 8 GPU par noeud
 #SBATCH --cpus-per-task=1 # reserver 8 CPU par tache (et memoire associee)
-#SBATCH --time=2:00:00 # temps maximal d’allocation "(HH:MM:SS)"
+#SBATCH --time=20:00:00 # temps maximal d’allocation "(HH:MM:SS)"
 #SBATCH --hint=nomultithread # desactiver l’hyperthreading
-#SBATCH --account=aho@v100
+#SBATCH --account=aho@cpu
 module purge # nettoyer les modules herites par defaut
 module load cpuarch/amd # selectionner les modules compiles pour AMD
 module load pytorch-gpu/py3/2.0.0 # charger les modules

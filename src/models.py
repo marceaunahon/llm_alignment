@@ -20,6 +20,7 @@ from transformers import (
     StoppingCriteria,
     BitsAndBytesConfig,
     StoppingCriteriaList,
+    AutoModel,
 )
 
 from src.config import PATH_API_KEYS, PATH_HF_CACHE, PATH_OFFLOAD
@@ -416,30 +417,151 @@ MODELS = dict(
             "likelihood_access": True,
             "endpoint": None,
         },   
-        "microsoft/Phi-3-mini-4k-instruct": {
+        "microsoft/phi-3-mini-4k-instruct": {
             "company": "microsoft",
             "model_class": "PhiModel",
-            "model_name": "microsoft/Phi-3-mini-4k-instruct",
+            "model_name": "microsoft/phi-3-mini-4k-instruct",
             "8bit": False,
             "likelihood_access": True,
             "endpoint": None,
         }, 
-        "microsoft/Phi-3-small-8k-instruct": {
+        "microsoft/phi-3-small-8k-instruct": {
             "company": "microsoft",
             "model_class": "PhiModel",
-            "model_name": "microsoft/Phi-3-small-8k-instruct",
+            "model_name": "microsoft/phi-3-small-8k-instruct",
             "8bit": False,
             "likelihood_access": True,
             "endpoint": None,
         },     
-        "microsoft/Phi-3-medium-4k-instruct": {
+        "microsoft/phi-3-medium-4k-instruct": {
             "company": "microsoft",
             "model_class": "PhiModel",
-            "model_name": "microsoft/Phi-3-medium-4k-instruct",
+            "model_name": "microsoft/phi-3-medium-4k-instruct",
             "8bit": False,
             "likelihood_access": True,
             "endpoint": None,
         },
+        "apple/OpenELM-270M": {
+            "company": "apple",
+            "model_class": "OpenELMModel",
+            "model_name": "apple/OpenELM-270M",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "apple/OpenELM-450M": {
+            "company": "apple",
+            "model_class": "OpenELMModel",
+            "model_name": "apple/OpenELM-450M",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "apple/OpenELM-1_1B": {
+            "company": "apple",
+            "model_class": "OpenELMModel",
+            "model_name": "apple/OpenELM-1_1B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "apple/OpenELM-3B": {
+            "company": "apple",
+            "model_class": "OpenELMModel",
+            "model_name": "apple/OpenELM-3B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "meta-llama/Llama-3.2-1B": {
+            "company": "meta-llama",
+            "model_class": "LlamaModel",
+            "model_name": "Llama-3.2-1B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "meta-llama/Llama-3.2-3B": {
+            "company": "meta-llama",
+            "model_class": "LlamaModel",
+            "model_name": "Llama-3.2-13",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "meta-llama/Llama-3.2-8B": {
+            "company": "meta-llama",
+            "model_class": "LlamaModel",
+            "model_name": "Llama-3.2-8B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "Qwen/Qwen2.5-0.5B": {
+            "company": "Qwen",
+            "model_class": "QwenModel",
+            "model_name": "Qwen/Qwen2.5-0.5B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "Qwen/Qwen2.5-1.5B": {
+            "company": "Qwen",
+            "model_class": "QwenModel",
+            "model_name": "Qwen/Qwen2.5-1.5B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "Qwen/Qwen2.5-3B": {
+            "company": "Qwen",
+            "model_class": "QwenModel",
+            "model_name": "Qwen/Qwen2.5-3B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "Qwen/Qwen2.5-7B": {
+            "company": "Qwen",
+            "model_class": "QwenModel",
+            "model_name": "Qwen/Qwen2.5-7B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "cerebras/Cerebras-GPT-111M": {
+            "company": "cerebras",
+            "model_class": "CerebrasModel",
+            "model_name": "cerebras/Cerebras-GPT-111M",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "cerebras/Cerebras-GPT-256M": {
+            "company": "cerebras",
+            "model_class": "CerebrasModel",
+            "model_name": "cerebras/Cerebras-GPT-256M",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "cerebras/Cerebras-GPT-1.3B": {
+            "company": "cerebras",
+            "model_class": "CerebrasModel",
+            "model_name": "cerebras/Cerebras-GPT-1.3B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+        "cerebras/Cerebras-GPT-2.7B": {
+            "company": "cerebras",
+            "model_class": "CerebrasModel",
+            "model_name": "cerebras/Cerebras-GPT-2.7B",
+            "8bit": False,
+            "likelihood_access": True,
+            "endpoint": None,
+        },
+
     }
 )
 
@@ -1531,6 +1653,457 @@ class PhiModel(LanguageModel):
 
         return result
     
+# ----------------------------------------------------------------------------------------------------------------------
+# META LLaMA MODEL WRAPPER
+# ----------------------------------------------------------------------------------------------------------------------
+
+class LlamaModel(LanguageModel):
+    """Llama Model Wrapper --> Access through HuggingFace Model Hub"""
+
+    def __init__(self, model_name: str):
+        super().__init__(model_name)
+        assert MODELS[model_name]["model_class"] == "LlamaModel", (
+            f"Errorneous Model Instatiation for {model_name}"
+        )
+
+        # Setup Device, Model
+        self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print(self._device)
+
+        if MODELS[model_name]["8bit"]:
+            self._quantization_config = BitsAndBytesConfig(
+                llm_int8_enable_fp32_cpu_offload=True
+            )
+
+            self._model = AutoModelForSeq2SeqLM.from_pretrained(
+                pretrained_model_name_or_path=self._model_name,
+                cache_dir=PATH_HF_CACHE,
+                quantization_config=self._quantization_config,
+                load_in_8bit=MODELS[model_name]["8bit"],
+                device_map="auto",
+                offload_folder=PATH_OFFLOAD,
+            )
+        else:
+            self._model = AutoModelForSeq2SeqLM.from_pretrained(
+                pretrained_model_name_or_path=self._model_name,
+                cache_dir=PATH_HF_CACHE,
+                device_map="auto",
+                offload_folder=PATH_OFFLOAD,
+           #).to(self._device)
+            )
+
+        # Setup Tokenizer
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            pretrained_model_name_or_path=self._model_name, cache_dir=PATH_HF_CACHE
+        )
+
+    def get_greedy_answer(
+        self, prompt_base: str, prompt_system: str, max_tokens: int
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        ).strip()
+        result["answer_raw"] = completion
+        result["answer"] = completion
+
+        return result
+
+    def get_top_p_answer(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        ).strip()
+        result["answer_raw"] = completion
+        result["answer"] = completion
+
+        return result
+    
+    def get_top_p_answer_proba(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+            "answer": [],
+            "scores": [],
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+            num_return_sequences = 10,
+        )
+
+        # Parse Output
+        for i in range(min(len(response.scores), len(response.sequences))):
+            completion = self._tokenizer.decode(
+                response.sequences[i], skip_special_tokens=True
+            ).strip()
+            result["answer"].append(completion)
+            result["scores"].append(response.scores[i])
+        # proba = response.scores[0]
+        # prob_A_raw = proba[0][71]
+        # prob_B_raw = proba[0][272]
+        # # compute softmax
+        # result["proba_A"] = float(torch.exp(prob_A_raw) / (torch.exp(prob_A_raw) + torch.exp(prob_B_raw)))
+        # result["proba_B"] = float(torch.exp(prob_B_raw) / (torch.exp(prob_A_raw) + torch.exp(prob_B_raw)))
+        
+
+        return result
+
+
+    
+
+# ----------------------------------------------------------------------------------------------------------------------
+# OPENELM MODEL WRAPPER
+# ----------------------------------------------------------------------------------------------------------------------
+
+class OpenELMModel(LanguageModel):
+    """Apple OpenELM Model Wrapper --> Access through HuggingFace Model Hub"""
+    
+    def __init__(self, model_name: str):
+        super().__init__(model_name)
+        assert MODELS[model_name]["model_class"] == "OpenELMModel", (
+            f"Errorneous Model Instatiation for {model_name}"
+        )
+
+        # Setup Device, Model and Tokenizer
+        self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self._model = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=self._model_name,
+            cache_dir=PATH_HF_CACHE,
+            torch_dtype="auto",
+            device_map="auto",
+            offload_folder=PATH_OFFLOAD,
+            trust_remote_code=True,            
+        )
+        #).to(self._device)
+
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            pretrained_model_name_or_path=self._model_name, cache_dir=PATH_HF_CACHE, trust_remote_code=True,
+        )
+
+    def get_greedy_answer(
+        self, prompt_base: str, prompt_system: str, max_tokens: int
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz Repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
+    
+    def get_top_p_answer(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
+
+# ----------------------------------------------------------------------------------------------------------------------
+# QWEN MODEL WRAPPER
+# ----------------------------------------------------------------------------------------------------------------------
+
+class QwenModel(LanguageModel):
+    """Apple Qwen Model Wrapper --> Access through HuggingFace Model Hub"""
+    
+    def __init__(self, model_name: str):
+        super().__init__(model_name)
+        assert MODELS[model_name]["model_class"] == "QwenModel", (
+            f"Errorneous Model Instatiation for {model_name}"
+        )
+
+        # Setup Device, Model and Tokenizer
+        self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self._model = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name_or_path=self._model_name,
+            cache_dir=PATH_HF_CACHE,
+            torch_dtype="auto",
+            device_map="auto",
+            offload_folder=PATH_OFFLOAD,
+            trust_remote_code=True,            
+        )
+        # ).to(self._device)
+
+        # self._model = self._model.to(torch.float32)
+
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            pretrained_model_name_or_path=self._model_name, cache_dir=PATH_HF_CACHE, trust_remote_code=True,
+        )
+
+    def get_greedy_answer(
+        self, prompt_base: str, prompt_system: str, max_tokens: int
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz Repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
+    
+    def get_top_p_answer(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
+    
+# ----------------------------------------------------------------------------------------------------------------------
+# CEREBRAS MODEL WRAPPER
+# ----------------------------------------------------------------------------------------------------------------------
+
+class CerebrasModel(LanguageModel):
+    """BigScience Cerebras Model Wrapper --> Access through HuggingFace Model Hub"""
+    
+    def __init__(self, model_name: str):
+        super().__init__(model_name)
+        assert MODELS[model_name]["model_class"] == "CerebrasModel", (
+            f"Errorneous Model Instatiation for {model_name}"
+        )
+
+        # Setup Device, Model and Tokenizer
+        self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self._model = AutoModel.from_pretrained(
+            pretrained_model_name_or_path=self._model_name,
+            cache_dir=PATH_HF_CACHE,
+            torch_dtype="auto",
+            device_map="auto",
+            offload_folder=PATH_OFFLOAD,
+        )
+        #).to(self._device)
+
+        self._model = self._model.to(torch.float32)
+
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            pretrained_model_name_or_path=self._model_name, cache_dir=PATH_HF_CACHE
+        )
+
+    def get_greedy_answer(
+        self, prompt_base: str, prompt_system: str, max_tokens: int
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz Repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
+
+    def get_top_p_answer(
+        self,
+        prompt_base: str,
+        prompt_system: str,
+        max_tokens: int,
+        temperature: float,
+        top_p: float,
+    ) -> str:
+        result = {
+            "timestamp": get_timestamp(),
+        }
+
+        # Greedy Search
+        input_ids = self._tokenizer(
+            f"{prompt_system}{prompt_base}", return_tensors="pt"
+        ).input_ids.to(self._device)
+        response = self._model.generate(
+            input_ids,
+            max_new_tokens=max_tokens,
+            length_penalty=0,
+            do_sample=True,
+            top_p=top_p,
+            temperature=temperature,
+            output_scores=True,
+            return_dict_in_generate=True,
+        )
+
+        # Parse Output --> bloomz repeats prompt text before answer --> Cut it
+        completion = self._tokenizer.decode(
+            response.sequences[0], skip_special_tokens=True
+        )
+        result["answer_raw"] = completion
+        len_prompt = len(f"{prompt_system}{prompt_base}")
+        completion = completion[len_prompt:].strip()
+        result["answer"] = completion
+
+        return result
 
 
 

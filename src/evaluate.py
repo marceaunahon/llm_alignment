@@ -104,6 +104,8 @@ args = parser.parse_args()
 
 # Load scenarios
 init_scenarios = pd.read_csv(f"data/{args.dataset_folder}_scenarios/moralchoice_{args.dataset}_ambiguity.csv", sep=args.sep) 
+#keep only the first 10 scenarios for testing
+# init_scenarios = init_scenarios.head(30)
 nb_scenarios = len(init_scenarios)
 
 done_ids = []
@@ -119,15 +121,16 @@ scenarios = init_scenarios[~init_scenarios["scenario_id"].isin(done_ids)]
 
 if len(done_ids) == 0:
     print("Starting evaluation from scratch")
-elif len(done_ids) == nb_scenarios:
+elif len(done_ids) >= nb_scenarios:
     print("All scenarios have been evaluated. Try again with a different model, question type or experiment name.")
-    choice = input("Erase ? (yes/no) : ")
-    while choice not in ["yes", "no"]:
-        print("Please enter yes or no")
-    if choice == "no" :
-        exit()
-    if choice == "yes" :
-        scenarios = init_scenarios
+    # choice = input("Erase ? (yes/no) : ")
+    # while choice not in ["yes", "no"]:
+    #     print("Please enter yes or no")
+    # if choice == "no" :
+    #     exit()
+    # if choice == "yes" :
+    #     scenarios = init_scenarios
+    exit()
 
 else:
     print(f"{len(done_ids)} scenarios have already been evaluated.")    

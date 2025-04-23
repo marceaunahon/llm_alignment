@@ -2046,7 +2046,7 @@ class CerebrasModel(LanguageModel):
 
         # Setup Device, Model and Tokenizer
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self._model = AutoModel.from_pretrained(
+        self._model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name_or_path=self._model_name,
             cache_dir=PATH_HF_CACHE,
             torch_dtype="auto",

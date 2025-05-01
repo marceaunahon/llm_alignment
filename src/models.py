@@ -1858,6 +1858,9 @@ class OpenELMModel(LanguageModel):
             f"Errorneous Model Instatiation for {model_name}"
         )
 
+        import nltk
+        nltk.download('punkt_tab')
+
         # Setup Device, Model and Tokenizer
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self._model = AutoModelForCausalLM.from_pretrained(

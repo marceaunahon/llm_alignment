@@ -8,6 +8,7 @@ import cohere
 import anthropic
 from openai import OpenAI
 import google.generativeai as palm
+import json
 
 from google.api_core import retry
 from typing import List, Dict
@@ -21,6 +22,7 @@ from transformers import (
     BitsAndBytesConfig,
     StoppingCriteriaList,
     AutoModel,
+    GPTNeoForCausalLM,
 )
 
 from src.config import PATH_API_KEYS, PATH_HF_CACHE, PATH_OFFLOAD
@@ -1868,9 +1870,9 @@ class OpenELMModel(LanguageModel):
         )
         #).to(self._device)
 
-        self._tokenizer = AutoTokenizer.from_pretrained(
-            pretrained_model_name_or_path=self._model_name, cache_dir=PATH_HF_CACHE, trust_remote_code=True,
-        )
+        self._tokenizer = AutoTokenizer.from_pretrained("NousResearch/Llama-2-7b-hf", 
+                                                        cache_dir=PATH_HF_CACHE, trust_remote_code=True)
+
 
     def get_greedy_answer(
         self, prompt_base: str, prompt_system: str, max_tokens: int
@@ -1885,6 +1887,8 @@ class OpenELMModel(LanguageModel):
         ).input_ids.to(self._device)
         response = self._model.generate(
             input_ids,
+            # add the attention mask
+            attention_mask= input_ids.ne(self._tokenizer.pad_token_id),
             max_new_tokens=max_tokens,
             length_penalty=0,
             output_scores=True,
@@ -1896,9 +1900,29 @@ class OpenELMModel(LanguageModel):
             response.sequences[0], skip_special_tokens=True
         )
         result["answer_raw"] = completion
-        len_prompt = len(f"{prompt_system}{prompt_base}")
-        completion = completion[len_prompt:].strip()
-        result["answer"] = completion
+
+        response = completion.split("Answer:")[-1].strip()  # Keep only the part after "Answer:"
+
+        with open(f"data/response_templates/ab.json", encoding="utf-8") as f:
+            x = json.load(f)
+            responses_A = x["responses_A"]
+            responses_B = x["responses_B"]
+        # if the response begins with something in responses_A, we take the first one
+        if any(response.startswith(r) for r in responses_A):
+            for r in responses_A:
+                if response.startswith(r):
+                    response = r
+        # if the response begins with something in responses_B, we take the first one
+        
+        elif any(response.startswith(r) for r in responses_B):
+            for r in responses_B:
+                if response.startswith(r):
+                    response = r
+
+        # if in none
+        else : 
+            response = response.split(".")[0].strip() + "."
+        result["answer"] = response
 
         return result
     
@@ -2155,7 +2179,7 @@ class EleutherAIModel(LanguageModel):
 
         # Setup Device, Model and Tokenizer
         self._device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self._model = AutoModelForCausalLM.from_pretrained(
+        self._model = GPTNeoForCausalLM.from_pretrained(
             pretrained_model_name_or_path=self._model_name,
             cache_dir=PATH_HF_CACHE,
             torch_dtype="auto",
@@ -2177,16 +2201,20 @@ class EleutherAIModel(LanguageModel):
             "timestamp": get_timestamp(),
         }
 
+        self._tokenizer.pad_token_id = self._tokenizer.eos_token_id
         # Greedy Search
         input_ids = self._tokenizer(
             f"{prompt_system}{prompt_base}", return_tensors="pt"
         ).input_ids.to(self._device)
         response = self._model.generate(
             input_ids,
+            # add the attention mask
+            attention_mask= input_ids.ne(self._tokenizer.pad_token_id),
             max_new_tokens=max_tokens,
             length_penalty=0,
             output_scores=True,
             return_dict_in_generate=True,
+            pad_token_id=self._tokenizer.eos_token_id,
         )
 
         # Parse Output --> bloomz Repeats prompt text before answer --> Cut it
@@ -2194,9 +2222,29 @@ class EleutherAIModel(LanguageModel):
             response.sequences[0], skip_special_tokens=True
         )
         result["answer_raw"] = completion
-        len_prompt = len(f"{prompt_system}{prompt_base}")
-        completion = completion[len_prompt:].strip()
-        result["answer"] = completion
+
+        response = completion.split("Answer:")[-1].strip()  # Keep only the part after "Answer:"
+
+        with open(f"data/response_templates/ab.json", encoding="utf-8") as f:
+            x = json.load(f)
+            responses_A = x["responses_A"]
+            responses_B = x["responses_B"]
+        # if the response begins with something in responses_A, we take the first one
+        if any(response.startswith(r) for r in responses_A):
+            for r in responses_A:
+                if response.startswith(r):
+                    response = r
+        # if the response begins with something in responses_B, we take the first one
+        
+        elif any(response.startswith(r) for r in responses_B):
+            for r in responses_B:
+                if response.startswith(r):
+                    response = r
+
+        # if in none
+        else : 
+            response = response.split(".")[0].strip() + "."
+        result["answer"] = response
 
         return result
 
